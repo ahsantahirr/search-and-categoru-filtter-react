@@ -11,12 +11,17 @@ import {
   Button,
 } from "@material-tailwind/react";
 import { CartContext } from '../Contexts/Cartcontext'
+
 function EcommerceCard({ title, image, price, description, ratings, ID, product }) {
   const { theme } = useContext(themeContext)
   const { addToCart, isItemAdded } = useContext(CartContext);
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const toggleDescription = () => {
+    setIsExpanded(!isExpanded);
+  };
 
   return (
-
     <Card className={`w-96 h-full shadow-xl font-poppins cursor-pointer ${theme ? ("bg-black text-white") : ("bg-white")}`}  >
       <Link to={`/product/${ID}`}>
         <CardHeader shadow={false} floated={false} className="h-96">
@@ -28,20 +33,33 @@ function EcommerceCard({ title, image, price, description, ratings, ID, product 
         </CardHeader>
         <CardBody>
           <div className={`mb-2 flex items-center justify-between p-2 ${theme ? ("bg-black text-white") : ("bg-white")}`}>
-            <Typography color="blue-gray" className="font-extrabold text-xl">
+            <Typography color="blue-gray" className="font-extrabold text-md">
               {title}
             </Typography>
             <Typography color="blue-gray" className="font-medium">
               $ {price}
             </Typography>
           </div>
-          <Typography
-            variant="small"
-            color="gray"
-            className={`font-normal opacity-75 px-1 ${theme ? ("bg-black text-white") : ("bg-white")}`}
-          >
-            {description}
-          </Typography>
+          <div className={`px-1 ${theme ? ("bg-black text-white") : ("bg-white")}`}>
+            <Typography
+              variant="small"
+              color="gray"
+              className="font-normal opacity-75"
+            >
+              {isExpanded ? description : `${description.substring(0, 50)}...`}
+            </Typography>
+            {description.length > 50 && (
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  toggleDescription();
+                }}
+                className="text-blue-500 hover:text-blue-700 text-sm mt-1"
+              >
+                {isExpanded ? "Read Less" : "Read More"}
+              </button>
+            )}
+          </div>
         </CardBody>
       </Link>
       <CardFooter className="pt-0 flex justify-center">
@@ -49,18 +67,13 @@ function EcommerceCard({ title, image, price, description, ratings, ID, product 
           ripple={false}
           fullWidth={true}
           className={`bg-blue-gray-900/10 text-white shadow-none hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100 hover:bg-black-500 mt-16 h-10 bg-black w-52 items-center ${theme ? "bg-white text-black" : ""}` }   
-         onClick={() => addToCart(product)}>
+          onClick={() => addToCart(product)}>
           {isItemAdded(product.id)
             ? `Added (${isItemAdded(product.id).quantity})`
             : "Add to Cart"}
-
-
         </Button>
       </CardFooter>
     </Card>
-
-
-
   )
 }
 
